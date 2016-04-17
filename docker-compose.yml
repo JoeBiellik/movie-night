@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  app:
+    image: node:latest
+    command: "npm run watch"
+    working_dir: /app
+    volumes:
+     - .:/app
+    ports:
+     - "3000:80"

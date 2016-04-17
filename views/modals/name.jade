@@ -1,0 +1,12 @@
+div(data-backdrop='static', data-keyboard='false')#modalName.modal.fade
+  div.modal-dialog
+    div.modal-content
+      div.modal-header
+        h4.modal-title Pick a Username
+          p.text-danger.pull-sm-right.m-a-0
+      div.modal-body
+        form.row
+          div.col-sm-9
+            input(placeholder='Username', required, pattern='^.{3,}$', title='Username must be at least 3 characters long').form-control.form-control-lg
+          div.col-sm-3
+            button.btn.btn-primary.btn-lg.btn-block Join

@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  main
+    section(style='background-image: url(#{cover})')#video.col-sm-10.text-sm-right
+      video(src='#{video}', type='video/mp4', preload='metadata').embed-responsive-item
+
+    section#sidebar.col-sm-2
+      a(href='#', title='Leave')
+        i.fa.fa-sign-out.text-muted.pull-sm-right
+
+      nav
+        ul.nav.nav-tabs
+          li.nav-item
+            a(href='#chat', data-toggle='tab').nav-link.active Chat
+          li.nav-item
+            a(href='#users', data-toggle='tab').nav-link Users 
+              span.label.label-primary 0
+          li.nav-item
+            a(href='#info', data-toggle='tab').nav-link Info
+
+      section.tab-content
+        article#chat.tab-pane.active
+          dl
+            dt Movie Night
+            dd Welcome to Movie Night
+          form.row
+            div.col-lg-9.p-r-0
+              input(placeholder='Message', autofocus).form-control
+            div.col-lg-3
+              button.btn.btn-default.btn-block Send
+
+        article#users.tab-pane
+          dl
+
+        article#info.tab-pane
+          h3
+            span#info-title
+            span#info-year.text-muted
+          p.lead Directed by 
+            span#info-director
+          p
+            em
+          img(title='Poster').img-fluid
+
+  include modals/name
+  include modals/admin

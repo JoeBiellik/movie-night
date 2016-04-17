@@ -1,0 +1,92 @@
+html, body, main {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	background-color: #171818;
+}
+
+#video {
+	height: 100%;
+	padding: 20px;
+	background: no-repeat center;
+	background-size: cover;
+}
+
+video {
+	display: none;
+}
+
+video::-webkit-media-controls {
+	display: none !important;
+}
+
+#sidebar {
+	background-color: #fff;
+	position: relative;
+	min-height: 100%;
+}
+
+#sidebar a i {
+	margin-top: 17px;
+	font-size: 1.3rem;
+}
+
+nav {
+	margin: 10px -15px 0;
+	padding: 0 15px;
+	border-bottom: 1px solid #ddd;
+}
+
+.nav-tabs {
+    border: none;
+}
+
+nav .label {
+    vertical-align: middle;
+}
+
+article {
+	margin: 10px 0;
+}
+
+#chat {
+	margin: 0;
+}
+
+#chat dl {
+	margin: 0 -15px 0 0;
+	padding: 10px 15px 10px 0;
+	overflow-y: scroll;
+	word-wrap: break-word;
+}
+
+#chat dl dt small {
+	padding-left: 5px;
+	font-style: italic;
+	color: #818a91;
+}
+
+#chat form {
+	width: 100%;
+	height: 55px;
+	position: absolute;
+	bottom: 0;
+}
+
+#users dl dt {
+	padding-bottom: 8px;
+}
+
+#users dl dt span.pull-sm-right {
+	font-weight: normal;
+}
+
+#users dl dd {
+	border-bottom: 1px solid #ddd;
+}
+
+#info #info-title {
+	margin-right: 8px;
+}
