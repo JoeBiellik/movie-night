@@ -4,6 +4,7 @@ var app = express();
 app.server = require('http').Server(app);
 var io = require('socket.io')(app.server);
 var marvel = require('marvel-characters');
+var moviedb = require('moviedb')(config.tmdb);
 
 app.disable('x-powered-by');
 app.set('view engine', 'jade');
@@ -19,6 +20,19 @@ app.get('/', function(req, res) {
 
 var log = function(socket, message) {
 	console.log('[' + socket.name.value + '] ' + message);
+}
+
+var setMovie = function(movie) {
+	config.movie = {
+		id: movie.id,
+		title: movie.title,
+		year: (new Date(movie.release_date)).getFullYear(),
+		runtime: movie.runtime || 0,
+		desc: movie.overview || '',
+		poster: 'https://image.tmdb.org/t/p/original' + movie.poster_path,
+		cover: 'https://image.tmdb.org/t/p/original' + movie.backdrop_path,
+		video: config.movie.video
+	};
 }
 
 setInterval(function() {
@@ -50,6 +64,12 @@ setInterval(function() {
 
 	io.emit('users', clients);
 }, 1000);
+
+if (!config.movie.title) {
+	moviedb.movieInfo({id: config.movie.id}, function(err, res) {
+		setMovie(res);
+	});
+}
 
 io.on('connection', function(socket) {
 	if (!socket.name) socket.name = {
@@ -192,6 +212,24 @@ io.on('connection', function(socket) {
 		if (socket.bufferProgress == progress) return;
 
 		socket.bufferProgress = progress;
+	});
+
+	socket.on('set-movie', function(url, id, cb) {
+		moviedb.movieInfo({id: id}, function(err, res) {
+			if (err) {
+				log(socket, 'Movie lookup failed');
+
+				cb(false);
+				return;
+			}
+
+			cb(true);
+
+			config.movie.video = url;
+			setMovie(res);
+
+			io.emit('movie-changed', config.movie);
+		});
 	});
 });
 

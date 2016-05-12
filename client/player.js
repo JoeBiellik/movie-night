@@ -1,3 +1,6 @@
+import lodash from 'lodash'
+import Osd from './osd'
+
 export default class Player {
 	constructor(elements, socket) {
 		this._elements = elements;
@@ -7,6 +10,8 @@ export default class Player {
 		this.visible = false;
 		this.controls = false;
 
+		Osd.setup(this._elements.player);
+
 		this._elements.player.on('play', this._onVideoPlay.bind(this));
 		this._elements.player.on('playing', this._onVideoPlaying.bind(this));
 		this._elements.player.on('pause', this._onVideoPause.bind(this));
@@ -15,7 +20,7 @@ export default class Player {
 		this._elements.player.on('seeked', this._onVideoSeeked.bind(this));
 		this._elements.player.on('ended', this._onVideoEnded.bind(this));
 		this._elements.player.on('dblclick', this._onVideoDblClick.bind(this));
-		//this._elements.player.on('DOMMouseScroll mousewheel', this._onVideoScroll.bind(this));
+		this._elements.player.on('DOMMouseScroll mousewheel', this._onVideoScroll.bind(this));
 		this._elements.player.on('contextmenu', () => { return this.controls; });
 
 		this._elements.player.on('waiting', () => { this._socket.emit('buffer-status', 'waiting'); })
@@ -29,6 +34,30 @@ export default class Player {
 
 	get video() {
 		return this._elements.player.get(0);
+	}
+
+	get duration() {
+		return Math.round(this.video.duration || 0);
+	}
+
+	get durationString() {
+		return this._formatFromSeconds(this.duration);
+	}
+
+	get position() {
+		return Math.round(this.video.currentTime || 0);
+	}
+
+	set position(position) {
+		if (!lodash.isInteger(position)) {
+			position = this._formatToSeconds(position);
+		}
+
+		this.video.currentTime = position;
+	}
+
+	get positionString() {
+		return this._formatFromSeconds(this.position);
 	}
 
 	get buffering() {
@@ -145,10 +174,13 @@ export default class Player {
 	_onVideoScroll(e) {
 		e.preventDefault();
 
+		let current = this.video.volume;
 		let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 
 		if (delta == 1 && this.video.volume <= 0.9) this.video.volume += 0.1;
 		if (delta == -1 && this.video.volume > 0.1) this.video.volume -= 0.1;
+
+		if (current != this.video.volume) Osd.display('Volume: ' + Math.round(this.video.volume * 100) + '%');
 	}
 
 	_onVideoDblClick() {
@@ -175,5 +207,27 @@ export default class Player {
 				el.msRequestFullscreen();
 			}
 		}
+	}
+
+	_formatFromSeconds(s) {
+		let h = Math.floor(s / 3600);
+		s -= h * 3600;
+		let m = Math.floor(s / 60);
+		s -= m * 60;
+
+		return h + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+	}
+
+	_formatToSeconds(str) {
+		let times = str.split(':');
+		times.reverse();
+		let x = times.length, s = 0, z;
+
+		for (let i = 0; i < x; i++) {
+			z = times[i] * Math.pow(60, i);
+			s += z;
+		}
+
+		return s;
 	}
 }

@@ -4,7 +4,7 @@ export default class Messages {
 	constructor(elements, socket) {
 		this._elements = elements;
 		this._socket = socket;
-		
+
 		this._socket.on('message', this._onMessage.bind(this));
 		this._elements.form.on('submit', this._onMessageSubmit.bind(this));
 	}
@@ -20,7 +20,7 @@ export default class Messages {
 	}
 
 	scroll() {
-		let el = this._elements.messages.eq(0);
+		let el = this._elements.messages.get(0);
 		el.scrollTop = el.scrollHeight;
 	}
 
@@ -42,6 +42,31 @@ export default class Messages {
 			input.val('');
 
 			this._elements.form.trigger('message:admin');
+
+			return false;
+		}
+
+		if (value.toLowerCase() == '/movie') {
+			input.val('');
+
+			this._elements.form.trigger('message:movie');
+
+			return false;
+		}
+
+		if (value.toLowerCase() == '/position') {
+			input.val('');
+
+			this._elements.form.trigger('message:position');
+
+			return false;
+		}
+
+		if (value.toLowerCase().substr(0, 6) == '/jump ') {
+			let position = value.toLowerCase().substr(6);
+			input.val('');
+
+			this._elements.form.trigger('message:jump', [position]);
 
 			return false;
 		}

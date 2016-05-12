@@ -10,7 +10,8 @@ $(window).load(function() {
 		},
 		modals: {
 			name: $('#modalName'),
-			admin: $('#modalAdmin')
+			admin: $('#modalAdmin'),
+			movie: $('#modalMovie')
 		},
 		video: {
 			container: $('#video'),
@@ -29,7 +30,7 @@ $(window).load(function() {
 		info: {
 			title: $('#info #info-title'),
 			year: $('#info #info-year'),
-			director: $('#info #info-director'),
+			runtime: $('#info #info-runtime'),
 			desc: $('#info p em'),
 			poster: $('#info img')
 		}

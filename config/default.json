@@ -1,13 +1,9 @@
 {
   "port": 80,
   "password": "password",
+  "tmdb": "756ba311ba48c9f4c90f719078533f62",
   "movie": {
-    "title": "Citizen Kane",
-    "year": 1941,
-    "director": "Orson Welles",
-    "desc": "Following the death of a publishing tycoon, news reporters scramble to discover the meaning of his final utterance.",
-    "poster": "https://image.tmdb.org/t/p/original/n8wfFsQ5vtm6dM8vdgXb6OLv2GY.jpg",
-    "cover": "https://image.tmdb.org/t/p/original/yN8t1qalUaM0nOpvuzmdbjJYSDE.jpg",
-    "video": "http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_50mb.mp4"
+    "id": 68718,
+    "video": "https://download.radioactivefrog.com/djangounchained.mp4"
   }
 }

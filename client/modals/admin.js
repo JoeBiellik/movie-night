@@ -9,10 +9,7 @@ export default class AdminModal extends Modal {
 
 		this._socket = socket;
 
-		this._element.on('shown.bs.modal', this._shown.bind(this));
 		$('form', this._element).on('submit', this._submit.bind(this));
-
-		this.disabled = false;
 	}
 
 	get input() {
@@ -43,6 +40,11 @@ export default class AdminModal extends Modal {
 		this._element.trigger('admin:changed', [valid]);
 
 		return valid;
+	}
+
+	_show(e) {
+		this.error = '';
+		this.disabled = false;
 	}
 
 	_shown(e) {

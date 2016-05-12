@@ -7,10 +7,13 @@ import Player from './player'
 import Messages from './messages'
 import NameModal from './modals/name'
 import AdminModal from './modals/admin'
+import MovieModal from './modals/movie'
 
 export default class App {
 	constructor(elements = {}) {
 		this._elements = elements;
+
+		Settings.write('url', this._elements.video.player.attr('src'));
 
 		this._io = new Socket();
 		this._user = new User(this.socket);
@@ -19,7 +22,8 @@ export default class App {
 
 		this._modals = {
 			name: new NameModal(this._elements.modals.name, this.socket),
-			admin: new AdminModal(this._elements.modals.admin, this.socket)
+			admin: new AdminModal(this._elements.modals.admin, this.socket),
+			movie: new MovieModal(this._elements.modals.movie, this.socket)
 		};
 
 		this.socket.on('connect', this.onConnected.bind(this));
@@ -29,10 +33,14 @@ export default class App {
 		this.socket.on('users', this.onUsers.bind(this));
 		this.socket.on('play', this.onPlay.bind(this));
 		this.socket.on('pause', this.onPause.bind(this));
+		this.socket.on('movie-changed', this.onMovieChanged.bind(this));
 
 		this._elements.modals.name.on('name:changed', this.onNameChanged.bind(this));
 		this._elements.modals.admin.on('admin:changed', this.onAdminChanged.bind(this));
 		this._elements.chat.form.on('message:admin', this.onMessageAdmin.bind(this));
+		this._elements.chat.form.on('message:movie', this.onMessageMovie.bind(this));
+		this._elements.chat.form.on('message:position', this.onMessagePosition.bind(this));
+		this._elements.chat.form.on('message:jump', this.onMessageJump.bind(this));
 		this._elements.tabs.on('shown.bs.tab', this.onTabChange.bind(this));
 		this._elements.leave.on('click', this.onLeaveClick.bind(this));
 
@@ -70,16 +78,24 @@ export default class App {
 		this._elements.loading.page.fadeOut('slow');
 	}
 
-	async getInfo() {
-		let info = await new Promise((resolve, reject) => {
-			this.socket.emit('info', resolve);
-		});
+	setInfo(info) {
+		Settings.write('movie', info);
 
 		this._elements.info.title.text(info.title);
 		this._elements.info.year.text(info.year);
-		this._elements.info.director.text(info.director);
+		this._elements.info.runtime.text('Runtime: ' + info.runtime.toLocaleString() + ' minutes');
 		this._elements.info.desc.text(info.desc);
 		this._elements.info.poster.attr('src', info.poster);
+		this._elements.video.container.css('background-image', 'url(' + info.cover + ')');
+		this._elements.video.player.attr('src', info.video);
+
+		document.title = document.title.substr(0, document.title.indexOf('·') + 2) + info.title;
+	}
+
+	async getInfo() {
+		this.setInfo(await new Promise((resolve, reject) => {
+			this.socket.emit('info', resolve);
+		}));
 	}
 
 	async onConnected() {
@@ -119,6 +135,23 @@ export default class App {
 		} else {
 			this._modals.admin.show();
 		}
+	}
+
+	onMessageMovie() {
+		if (this.user.admin) {
+			this._modals.movie.show();
+		}
+	}
+
+	onMessagePosition() {
+		this.messages.add('You are currently at playback position ' + this.player.positionString + ' of ' + this.player.durationString);
+		this.messages.focus();
+	}
+
+	onMessageJump(e, position) {
+		this.player.position = position;
+
+		this.onMessagePosition();
 	}
 
 	onUserJoined(user) {
@@ -192,6 +225,14 @@ export default class App {
 
 	onPause() {
 		this.player.video.pause();
+	}
+
+	onMovieChanged(movie) {
+		this.setInfo(movie);
+
+		this.messages.add('Movie changed: ' + movie.title + ' (' + movie.year + ')');
+		
+		this.player.buffer();
 	}
 
 	onTabChange(e) {
