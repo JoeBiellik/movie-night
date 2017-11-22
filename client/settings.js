@@ -1,4 +1,6 @@
-import lodash from 'lodash'
+require('babel-polyfill');
+
+import lodash from 'lodash';
 
 export default class Settings {
 	static read(key, fallback = null) {

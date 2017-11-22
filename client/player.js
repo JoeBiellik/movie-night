@@ -1,9 +1,13 @@
-import lodash from 'lodash'
-import Osd from './osd'
+require('babel-polyfill');
+
+import lodash from 'lodash';
+import Osd from './osd';
 
 export default class Player {
 	constructor(elements, socket) {
-		this._elements = elements;
+		this._elements = elements.video;
+		this._container = elements.container;
+		this._sidebar = elements.sidebar;
 		this._socket = socket;
 		this._buffering = false;
 		this._aspectRatio = 16 / 9;
@@ -104,8 +108,8 @@ export default class Player {
 	}
 
 	resize() {
-		let width = this._elements.container.width();
-		let height = this._elements.container.height();
+		const width = this._container.width() - this._sidebar.width();
+		const height = this._elements.container.height();
 
 		if (width / height < this._aspectRatio) {
 			this._elements.player.css('width', width);
@@ -124,7 +128,7 @@ export default class Player {
 		this.video.muted = true;
 		this.video.play();
 
-		let listener = (e) => {
+		const listener = () => {
 			if (this.video.currentTime > 0) {
 				this._buffering = true;
 				this.video.pause();
@@ -161,7 +165,7 @@ export default class Player {
 		console.log('ended');
 	}
 
-	_onVideoProgress(e) {
+	_onVideoProgress() {
 		let buffered = 0;
 
 		for (let i = 0; i < this.video.buffered.length; i++) {
@@ -174,8 +178,8 @@ export default class Player {
 	_onVideoScroll(e) {
 		e.preventDefault();
 
-		let current = this.video.volume;
-		let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+		const current = this.video.volume;
+		const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 
 		if (delta == 1 && this.video.volume <= 0.9) this.video.volume += 0.1;
 		if (delta == -1 && this.video.volume > 0.1) this.video.volume -= 0.1;
@@ -195,7 +199,7 @@ export default class Player {
 				document.msExitFullscreen();
 			}
 		} else {
-			let el = this.video;
+			const el = this.video;
 
 			if (el.requestFullscreen) {
 				el.requestFullscreen();
@@ -210,18 +214,19 @@ export default class Player {
 	}
 
 	_formatFromSeconds(s) {
-		let h = Math.floor(s / 3600);
+		const h = Math.floor(s / 3600);
 		s -= h * 3600;
-		let m = Math.floor(s / 60);
+		const m = Math.floor(s / 60);
 		s -= m * 60;
 
 		return h + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
 	}
 
 	_formatToSeconds(str) {
-		let times = str.split(':');
+		const times = str.split(':');
 		times.reverse();
-		let x = times.length, s = 0, z;
+		const x = times.length;
+		let s = 0, z;
 
 		for (let i = 0; i < x; i++) {
 			z = times[i] * Math.pow(60, i);

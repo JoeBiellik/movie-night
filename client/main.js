@@ -1,13 +1,14 @@
-require('babel-core/register');
+require('babel-polyfill');
 
-import App from './app'
+import App from './app';
 
-$(window).load(function() {
+$(() => {
 	new App({
 		loading: {
 			page: $('#page-loader'),
 			message: $('#page-loader p')
 		},
+		container: $('main'),
 		modals: {
 			name: $('#modalName'),
 			admin: $('#modalAdmin'),
@@ -17,10 +18,11 @@ $(window).load(function() {
 			container: $('#video'),
 			player: $('#video video')
 		},
+		sidebar: $('#sidebar'),
 		tabs: $('nav'),
 		leave: $('#sidebar > a'),
 		users: {
-			count: $('nav .label'),
+			count: $('nav .badge'),
 			list: $('#users dl')
 		},
 		chat: {

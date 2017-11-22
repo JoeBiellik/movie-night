@@ -1,3 +1,5 @@
+require('babel-polyfill');
+
 export default class Osd {
 	static setup(parent) {
 		this._parent = parent;

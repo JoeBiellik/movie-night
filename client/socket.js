@@ -1,4 +1,6 @@
-import io from 'socket.io-client'
+require('babel-polyfill');
+
+import io from 'socket.io-client';
 
 export default class Socket {
 	constructor() {
@@ -30,7 +32,7 @@ export default class Socket {
 
 	_ping() {
 		this.socket.emit('latency', Date.now(), (time) => {
-			let latency = Date.now() - time;
+			const latency = Date.now() - time;
 
 			if (latency != this.latency) {
 				this._latency = latency;
@@ -40,7 +42,7 @@ export default class Socket {
 			}
 		});
 	}
-	
+
 	_pong(time, cb) {
 		cb(time);
 	}

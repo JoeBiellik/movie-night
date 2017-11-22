@@ -1,3 +1,5 @@
+require('babel-polyfill');
+
 export default class Message {
 	constructor(message) {
 		this._sender = message.name || null;
@@ -19,8 +21,9 @@ export default class Message {
 
 	get html() {
 		if (this.sender) {
-			let dt = $('<dt>').text(this.sender);
-			let dd = $('<dd>').text(this.message);
+			const dt = $('<dt>').text(this.sender);
+			const dd = $('<dd>').text(this.message);
+			dd.html(dd.html().replace(/\n/g, '<br>'));
 
 			if (this.sent) {
 				dt.append($('<small>').text(this._formatTime(this.sent)));
@@ -44,8 +47,9 @@ export default class Message {
 			amPm = 'pm';
 		}
 
-		if (minute < 10) hour = '0' + hour;
+		if (hour == 0) hour = 12;
+		if (minute < 10) minute = '0' + minute;
 
-		return hour + ':' + date.getMinutes() + amPm;
+		return hour + ':' + minute + amPm;
 	}
 }

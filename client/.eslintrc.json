@@ -1,0 +1,19 @@
+{
+  "extends": ["eslint:recommended"],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "jquery": true
+  },
+  "rules": {
+    "indent": ["error", "tab"],
+    "quotes": ["error", "single", "avoid-escape"],
+    "linebreak-style": ["error", "unix"],
+    "semi": ["error", "always"],
+    "no-trailing-spaces": ["warn"],
+    "comma-dangle": ["error"],
+    "no-console": ["warn"],
+    "no-var": ["error"],
+    "prefer-const": ["error"]
+  }
+}

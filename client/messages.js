@@ -1,4 +1,6 @@
-import Message from './message'
+require('babel-polyfill');
+
+import Message from './message';
 
 export default class Messages {
 	constructor(elements, socket) {
@@ -20,7 +22,7 @@ export default class Messages {
 	}
 
 	scroll() {
-		let el = this._elements.messages.get(0);
+		const el = this._elements.messages.get(0);
 		el.scrollTop = el.scrollHeight;
 	}
 
@@ -29,46 +31,59 @@ export default class Messages {
 	}
 
 	_onMessageSubmit() {
-		let input = $('input', this._elements.form);
-		let value = input.val().trim();
+		const input = $('input', this._elements.form);
+		const value = input.val().trim();
 
 		if (!value) {
-			input.val('');
+			input.val('').focus();
 
 			return false;
 		}
 
-		if (value.toLowerCase() == '/admin') {
-			input.val('');
+		if (value.substr(0, 1) == '/') {
+			if (value.toLowerCase() == '/admin') {
+				input.val('').focus();
 
-			this._elements.form.trigger('message:admin');
+				this._elements.form.trigger('message:admin');
 
-			return false;
-		}
+				return false;
+			}
 
-		if (value.toLowerCase() == '/movie') {
-			input.val('');
+			if (value.toLowerCase() == '/movie') {
+				input.val('').focus();
 
-			this._elements.form.trigger('message:movie');
+				this._elements.form.trigger('message:movie');
 
-			return false;
-		}
+				return false;
+			}
 
-		if (value.toLowerCase() == '/position') {
-			input.val('');
+			if (value.toLowerCase() == '/position') {
+				input.val('').focus();
 
-			this._elements.form.trigger('message:position');
+				this._elements.form.trigger('message:position');
 
-			return false;
-		}
+				return false;
+			}
 
-		if (value.toLowerCase().substr(0, 6) == '/jump ') {
-			let position = value.toLowerCase().substr(6);
-			input.val('');
+			// if (value.toLowerCase().substr(0, 6) == '/jump ') {
+			// 	const position = value.toLowerCase().substr(6);
+			// 	input.val('').focus();
+			//
+			// 	this._elements.form.trigger('message:jump', [position]);
+			//
+			// 	return false;
+			// }
 
-			this._elements.form.trigger('message:jump', [position]);
+			if (value.toLowerCase() != '/play' && value.toLowerCase() != '/pause' && value.toLowerCase().substr(0, 6) != '/jump ') {
+				this.add(new Message({
+					name: 'Movie Night',
+					msg: 'Command not recognised, supported commands:\n/jump [time]\n/position'
+				}));
 
-			return false;
+				input.val('').focus();
+
+				return false;
+			}
 		}
 
 		this._socket.emit('message', value);

@@ -1,13 +1,13 @@
 require('babel-polyfill');
 
-import Settings from './settings'
-import Socket from './socket'
-import User from './user'
-import Player from './player'
-import Messages from './messages'
-import NameModal from './modals/name'
-import AdminModal from './modals/admin'
-import MovieModal from './modals/movie'
+import Settings from './settings';
+import Socket from './socket';
+import User from './user';
+import Player from './player';
+import Messages from './messages';
+import NameModal from './modals/name';
+import AdminModal from './modals/admin';
+import MovieModal from './modals/movie';
 
 export default class App {
 	constructor(elements = {}) {
@@ -17,7 +17,7 @@ export default class App {
 
 		this._io = new Socket();
 		this._user = new User(this.socket);
-		this._player = new Player(this._elements.video, this.socket);
+		this._player = new Player(this._elements, this.socket);
 		this._messages = new Messages(this._elements.chat, this.socket);
 
 		this._modals = {
@@ -33,6 +33,7 @@ export default class App {
 		this.socket.on('users', this.onUsers.bind(this));
 		this.socket.on('play', this.onPlay.bind(this));
 		this.socket.on('pause', this.onPause.bind(this));
+		this.socket.on('jump', this.onJump.bind(this));
 		this.socket.on('movie-changed', this.onMovieChanged.bind(this));
 
 		this._elements.modals.name.on('name:changed', this.onNameChanged.bind(this));
@@ -40,7 +41,7 @@ export default class App {
 		this._elements.chat.form.on('message:admin', this.onMessageAdmin.bind(this));
 		this._elements.chat.form.on('message:movie', this.onMessageMovie.bind(this));
 		this._elements.chat.form.on('message:position', this.onMessagePosition.bind(this));
-		this._elements.chat.form.on('message:jump', this.onMessageJump.bind(this));
+		//this._elements.chat.form.on('message:jump', this.onMessageJump.bind(this));
 		this._elements.tabs.on('shown.bs.tab', this.onTabChange.bind(this));
 		this._elements.leave.on('click', this.onLeaveClick.bind(this));
 
@@ -93,9 +94,7 @@ export default class App {
 	}
 
 	async getInfo() {
-		this.setInfo(await new Promise((resolve, reject) => {
-			this.socket.emit('info', resolve);
-		}));
+		this.setInfo(await new Promise(resolve => this.socket.emit('info', resolve)));
 	}
 
 	async onConnected() {
@@ -111,7 +110,7 @@ export default class App {
 		this.messages.focus();
 
 		if (!this.user.admin && Settings.read('admin', false)) {
-			await this._modals.admin.login(Settings.read('admin'))
+			await this._modals.admin.login(Settings.read('admin'));
 		}
 	}
 
@@ -144,15 +143,15 @@ export default class App {
 	}
 
 	onMessagePosition() {
-		this.messages.add('You are currently at playback position ' + this.player.positionString + ' of ' + this.player.durationString);
+		this.messages.add('You are at playback position ' + this.player.positionString + ' of ' + this.player.durationString);
 		this.messages.focus();
 	}
 
-	onMessageJump(e, position) {
-		this.player.position = position;
-
-		this.onMessagePosition();
-	}
+	// onMessageJump(e, position) {
+	// 	this.player.position = position;
+	//
+	// 	this.onMessagePosition();
+	// }
 
 	onUserJoined(user) {
 		this.messages.add(user + ' has joined');
@@ -169,7 +168,7 @@ export default class App {
 	async onUsers(users) {
 		this._elements.users.list.empty();
 
-		let name = await this.user.getName();
+		const name = await this.user.getName();
 
 		users.sort((a, b) => {
 			if (b.name == name) return 1;
@@ -179,7 +178,7 @@ export default class App {
 		});
 
 		users.forEach((user) => {
-			let dt = $('<dt>').text(' ' + user.name + ' ');
+			const dt = $('<dt>').text(' ' + user.name + ' ');
 
 			if (user.admin) {
 				dt.prepend($('<i>').attr('title', 'Admin').addClass('fa fa-star text-warning'));
@@ -189,28 +188,27 @@ export default class App {
 				dt.append($('<small>').text(user.latency + 'ms'));
 			}
 
-			let icon = $('<i>');
-			let progress = $('<progress>').attr('max', 100).addClass('progress');
+			const icon = $('<i>');
+			const progress = $('<div>').addClass('progress');
+			const progressBar = $('<div>').addClass('progress-bar');
 
 			if (user.bufferStatus == 'waiting') {
 				icon.text('Waiting');
-				progress.addClass('progress-default');
 			} else if (user.bufferStatus == 'canplay') {
 				icon.addClass('text-warning fa fa-refresh fs-spin');
-				progress.addClass('progress-warning');
+				progressBar.addClass('bg-warning');
 			} else if (user.bufferStatus == 'canplaythrough') {
 				icon.addClass('text-success fa fa-check');
-				progress.addClass('progress-success');
+				progressBar.addClass('bg-success');
 			} else {
 				icon.addClass('text-error fa fa-times-circle');
-				progress.addClass('progress-default');
 			}
 
-			progress.attr('value', user.bufferProgress);
+			progressBar.css('width', user.bufferProgress + '%');
 
-			dt.append($('<span>').addClass('pull-sm-right').append(icon));
+			dt.append($('<span>').addClass('float-right').append(icon));
 
-			let dd = $('<dd>').append(progress);
+			const dd = $('<dd>').append(progress.append(progressBar));
 
 			this._elements.users.list.append(dt);
 			this._elements.users.list.append(dd);
@@ -227,11 +225,17 @@ export default class App {
 		this.player.video.pause();
 	}
 
+	onJump(position) {
+		this.player.position = position;
+
+		this.onMessagePosition();
+	}
+
 	onMovieChanged(movie) {
 		this.setInfo(movie);
 
 		this.messages.add('Movie changed: ' + movie.title + ' (' + movie.year + ')');
-		
+
 		this.player.buffer();
 	}
 
@@ -251,7 +255,7 @@ export default class App {
 	onResize() {
 		this.player.resize();
 
-		this._elements.chat.messages.css('height', this._elements.video.container.height() - 85);
+		this._elements.chat.messages.css('height', this._elements.video.container.height() - 120);
 
 		this.messages.scroll();
 	}

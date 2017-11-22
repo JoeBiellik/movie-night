@@ -3,7 +3,7 @@
 [![Release Version](https://img.shields.io/github/release/JoeBiellik/movie-night.svg)](https://github.com/JoeBiellik/movie-night/releases)
 [![Dependencies](https://img.shields.io/david/JoeBiellik/movie-night.svg)](https://david-dm.org/JoeBiellik/movie-night)
 
-Very simple [Node.js](https://nodejs.org/) web app that allows users to stream a movie and watch synchronised. Built with [Express.js](http://expressjs.com/), [Socket.io](http://socket.io/), [jQuery](https://jquery.com/), [Jade](http://jade-lang.com/) and [Bootstrap 4](http://v4-alpha.getbootstrap.com/), with [Babel](https://babeljs.io/) and [Browserify](http://browserify.org/) for client-side ES7.
+Very simple [Node.js](https://nodejs.org/) web app that allows users to stream a movie and watch synchronised. Built with [Express.js](https://expressjs.com/), [Socket.io](https://socket.io/), [jQuery](https://jquery.com/), [Pug](https://pugjs.org/) and [Bootstrap 4](https://getbootstrap.com/), with [Babel](https://babeljs.io/) and [Browserify](http://browserify.org/) for client-side ES7.
 
 ## Development
 1. Clone this repo:

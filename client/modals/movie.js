@@ -1,7 +1,7 @@
 require('babel-polyfill');
 
-import Modal from './modal'
-import Settings from '../settings'
+import Modal from './modal';
+import Settings from '../settings';
 
 export default class MovieModal extends Modal {
 	constructor(element, socket) {

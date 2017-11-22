@@ -1,13 +1,13 @@
 extends layout
 
 block content
-  main
-    section(style='background-image: url(#{cover})')#video.col-sm-10.text-sm-right
-      video(src='#{video}', type='video/mp4', preload='metadata').embed-responsive-item
+  main.d-flex.flex-row.flex-nowrap.justify-content-between.align-items-stretch
+    section(style='background-image: url(#{cover})')#video
+      video.mx-auto
 
-    section#sidebar.col-sm-2
+    section#sidebar
       a(href='#', title='Leave')
-        i.fa.fa-sign-out.text-muted.pull-sm-right
+        i.fa.fa-sign-out.text-muted
 
       nav
         ul.nav.nav-tabs
@@ -15,7 +15,7 @@ block content
             a(href='#chat', data-toggle='tab').nav-link.active Chat
           li.nav-item
             a(href='#users', data-toggle='tab').nav-link Users 
-              span.label.label-primary 0
+              span.badge.badge-primary 0
           li.nav-item
             a(href='#info', data-toggle='tab').nav-link Info
 
@@ -25,9 +25,9 @@ block content
             dt Movie Night
             dd Welcome to Movie Night
           form.row
-            div.col-lg-9.p-r-0
+            .col-lg-9.p-r-0
               input(placeholder='Message', autofocus).form-control
-            div.col-lg-3
+            .col-lg-3
               button.btn.btn-default.btn-block Send
 
         article#users.tab-pane

@@ -1,21 +1,23 @@
-var watchify = require('watchify');
-var browserify = require('browserify');
-var gulp = require('gulp');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var gutil = require('gulp-util');
-var sourcemaps = require('gulp-sourcemaps');
-var assign = require('lodash.assign');
-var babelify = require('babelify');
+const watchify = require('watchify');
+const browserify = require('browserify');
+const gulp = require('gulp');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const gutil = require('gulp-util');
+const sourcemaps = require('gulp-sourcemaps');
+const assign = require('lodash.assign');
+const babelify = require('babelify');
 
-var customOpts = {
+const debug = true;
+
+const customOpts = {
 	entries: ['main.js'],
 	basedir: './client/',
-	debug: true
+	debug: debug
 };
 
-var opts = assign({}, watchify.args, customOpts);
-var b = watchify(browserify(opts)); 
+const opts = assign({}, watchify.args, customOpts);
+const b = watchify(browserify(opts));
 
 b.transform(babelify);
 
@@ -28,7 +30,7 @@ function bundle() {
 		.on('error', gutil.log.bind(gutil, 'Browserify Error'))
 		.pipe(source('main.js'))
 		.pipe(buffer())
-		.pipe(sourcemaps.init({loadMaps: true}))
+		.pipe(sourcemaps.init({loadMaps: debug}))
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest('./public'));
 }

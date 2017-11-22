@@ -1,15 +1,27 @@
-var express = require('express');
-var config = require('config');
-var app = express();
+const express = require('express');
+const config = require('config');
+const app = express();
 app.server = require('http').Server(app);
-var io = require('socket.io')(app.server);
-var marvel = require('marvel-characters');
-var moviedb = require('moviedb')(config.tmdb);
+const io = require('socket.io')(app.server);
+const marvel = require('marvel-characters');
+const moviedb = require('moviedb')(config.tmdb);
 
 app.disable('x-powered-by');
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.locals.pretty = true;
+
+app.options('*', function(req, res) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+	res.status(200).send();
+});
+
+app.all('*', function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+	next();
+});
 
 app.use(require('compression')());
 app.use(express.static('public'));
@@ -18,11 +30,11 @@ app.get('/', function(req, res) {
 	res.render('index', config.movie);
 });
 
-var log = function(socket, message) {
+const log = function(socket, message) {
 	console.log('[' + socket.name.value + '] ' + message);
-}
+};
 
-var setMovie = function(movie) {
+const setMovie = function(movie) {
 	config.movie = {
 		id: movie.id,
 		title: movie.title,
@@ -33,15 +45,15 @@ var setMovie = function(movie) {
 		cover: 'https://image.tmdb.org/t/p/original' + movie.backdrop_path,
 		video: config.movie.video
 	};
-}
+};
 
 setInterval(function() {
 	if (Object.keys(io.sockets.connected).length < 1) return;
 
-	var clients = [];
+	const clients = [];
 
 	Object.keys(io.sockets.connected).forEach(function(element) {
-		var client = io.sockets.connected[element];
+		const client = io.sockets.connected[element];
 		if (!client.name.picked) return;
 
 		clients.push({
@@ -83,8 +95,8 @@ io.on('connection', function(socket) {
 		});
 	}, 2000);
 
-	var countClients = function() {
-		var joined = 0;
+	const countClients = function() {
+		let joined = 0;
 		Object.keys(io.sockets.connected).forEach(function(element) {
 			if (io.sockets.connected[element].name.picked) {
 				joined++;
@@ -95,7 +107,7 @@ io.on('connection', function(socket) {
 			connected: Object.keys(io.sockets.connected).length,
 			joined: joined
 		};
-	}
+	};
 
 	log(socket, 'Connected (' + countClients().connected + ')');
 	socket.emit('user-count', countClients().joined);
@@ -133,9 +145,18 @@ io.on('connection', function(socket) {
 			io.emit('pause');
 		}
 
+		if (msg.trim().toLowerCase().substr(0, 6) == '/jump ') {
+			if (!socket.admin) return;
+
+			const position = msg.trim().toLowerCase().substr(6);
+
+			log(socket, 'jumped playback to ' + position);
+
+			io.emit('jump', position);
+		}
 	});
 
-	socket.on('disconnect', function(msg) {
+	socket.on('disconnect', function() {
 		log(socket, 'Disconnected (' + countClients().connected + ')');
 
 		if (!socket.name.picked) return;
@@ -151,10 +172,10 @@ io.on('connection', function(socket) {
 	socket.on('set-name', function(name, cb) {
 		name = name.trim();
 
-		var valid = Boolean(name);
+		let valid = Boolean(name);
 
 		if (valid) {
-			Object.keys(io.sockets.connected).forEach(function(element, index, array) {
+			Object.keys(io.sockets.connected).forEach(function(element) {
 				if (io.sockets.connected[element].name.value.toLowerCase() == name.toLowerCase()) {
 					valid = false;
 				}
