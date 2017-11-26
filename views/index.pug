@@ -2,7 +2,7 @@ extends layout
 
 block content
   main.d-flex.flex-row.flex-nowrap.justify-content-between.align-items-stretch
-    section(style='background-image: url(#{cover})')#video
+    section#video(style='background-image: url(' + cover + ')')
       video.mx-auto
 
     section#sidebar
@@ -12,21 +12,21 @@ block content
       nav
         ul.nav.nav-tabs
           li.nav-item
-            a(href='#chat', data-toggle='tab').nav-link.active Chat
+            a.nav-link.active(href='#chat', data-toggle='tab') Chat
           li.nav-item
-            a(href='#users', data-toggle='tab').nav-link Users 
+            a.nav-link(href='#users', data-toggle='tab') Users 
               span.badge.badge-primary 0
           li.nav-item
-            a(href='#info', data-toggle='tab').nav-link Info
+            a.nav-link(href='#info', data-toggle='tab') Info
 
       section.tab-content
         article#chat.tab-pane.active
           dl
             dt Movie Night
             dd Welcome to Movie Night
-          form.row
+          form.row(action='#')
             .col-lg-9.p-r-0
-              input(placeholder='Message', autofocus).form-control
+              input.form-control(type='text', placeholder='Message', autofocus)
             .col-lg-3
               button.btn.btn-default.btn-block Send
 
@@ -40,7 +40,7 @@ block content
           p#info-runtime.text-muted
           p
             em
-          img(title='Poster').img-fluid
+          img.img-fluid(alt='Poster', title='Poster')
 
   include modals/name
   include modals/admin

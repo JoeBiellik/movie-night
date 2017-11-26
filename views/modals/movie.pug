@@ -1,16 +1,16 @@
-div#modalMovie.modal.fade
-  div.modal-dialog
-    div.modal-content
-      div.modal-header
+#modalMovie.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
         h4.modal-title Set Movie
           p.text-danger.float-right.m-a-0
-      div.modal-body
-        form
-          div.form-group.row
-            div.col-sm-12
-              input(type='url', placeholder='URL')#url.form-control.form-control-lg
-          div.form-group.row
-            div.col-sm-8
-              input(placeholder='ID', pattern='^\\d+$', title='TMDB.org ID')#id.form-control.form-control-lg
-            div.col-sm-4
+      .modal-body
+        form(action='#')
+          .form-group.row
+            .col-sm-12
+              input#url.form-control.form-control-lg(type='url', placeholder='URL')
+          .form-group.row
+            .col-sm-8
+              input#id.form-control.form-control-lg(type='text', placeholder='ID', pattern='^\\d+$', title='TMDB.org ID')
+            .col-sm-4
               button.btn.btn-primary.btn-lg.btn-block Set Movie
