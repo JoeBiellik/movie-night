@@ -4,9 +4,16 @@ block content
   main.d-flex.flex-row.flex-nowrap.justify-content-between.align-items-stretch
     section#video(style='background-image: url(' + cover + ')')
       video.mx-auto
+      section.controls.px-4.py-2
+        button#play.btn.btn-default.float-left
+          i.fa.fa-play
+        .progress.float-left.ml-4
+          .progress-bar
+        p.float-right 0:00:00 / 0:00:00
 
     section#sidebar
       a(href='#', title='Leave')
+        i.fa.fa-cog.text-muted
         i.fa.fa-sign-out.text-muted
 
       nav

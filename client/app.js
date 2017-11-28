@@ -12,6 +12,7 @@ import MovieModal from './modals/movie';
 export default class App {
 	constructor(elements = {}) {
 		this._elements = elements;
+		this._playerMouseMoveTimeout = null;
 
 		Settings.write('url', this._elements.video.player.attr('src'));
 
@@ -39,14 +40,22 @@ export default class App {
 		this._elements.modals.name.on('name:changed', this.onNameChanged.bind(this));
 		this._elements.modals.admin.on('admin:changed', this.onAdminChanged.bind(this));
 		this._elements.chat.form.on('message:admin', this.onMessageAdmin.bind(this));
-		this._elements.chat.form.on('message:movie', this.onMessageMovie.bind(this));
+		//this._elements.chat.form.on('message:movie', this.onMessageMovie.bind(this));
 		this._elements.chat.form.on('message:position', this.onMessagePosition.bind(this));
 		//this._elements.chat.form.on('message:jump', this.onMessageJump.bind(this));
 		this._elements.tabs.on('shown.bs.tab', this.onTabChange.bind(this));
+		this._elements.movie.on('click', this.onMessageMovie.bind(this));
 		this._elements.leave.on('click', this.onLeaveClick.bind(this));
+
+		this._elements.video.container.on('mousemove', this.onPlayerMouseMove.bind(this));
+		this._elements.video.play.on('click', this.onPlayClick.bind(this));
 
 		$(window).on('resize', this.onResize.bind(this));
 		$(window).resize();
+
+		this._elements.movie.hide();
+		this._elements.video.controls.hide();
+		this._elements.video.play.hide();
 
 		this.updateSpinner('Connecting to server');
 	}
@@ -118,13 +127,21 @@ export default class App {
 		this.user.admin = admin;
 
 		if (admin) {
+			this._elements.movie.show();
+			this._elements.video.controls.show();
+			this._elements.video.play.show();
+
 			this.messages.add('You are now an admin!');
 			this.messages.focus();
 		} else {
+			this._elements.movie.hide();
+			this._elements.video.controls.hide();
+			this._elements.video.play.hide();
+
 			Settings.write('admin', null);
 		}
 
-		//this.player.visible = admin;
+		this.player.visible = admin;
 		//this.player.controls = admin;
 	}
 
@@ -219,10 +236,14 @@ export default class App {
 		if (!this.player.visible) this.player.visible = true;
 
 		this.player.video.play();
+
+		this._elements.video.controls.show();
 	}
 
 	onPause() {
 		this.player.video.pause();
+
+		this._elements.video.controls.show();
 	}
 
 	onJump(position) {
@@ -250,6 +271,34 @@ export default class App {
 
 		Settings.clear();
 		window.location.reload(true);
+	}
+
+	onPlayerMouseMove() {
+		this._elements.video.controls.show();
+
+		if (this._playerMouseMoveTimeout !== null) {
+			clearTimeout(this._playerMouseMoveTimeout);
+			this._playerMouseMoveTimeout = null;
+		}
+
+		this._playerMouseMoveTimeout = setTimeout(() => this.onplayerMouseMoveTimeout(), 3000);
+	}
+
+	onplayerMouseMoveTimeout() {
+		clearTimeout(this._playerMouseMoveTimeout);
+		this._playerMouseMoveTimeout = null;
+
+		this._elements.video.controls.fadeOut(250);
+	}
+
+	onPlayClick() {
+		if (!this.user.admin) return;
+
+		if (this.player.video.paused || this.player.video.ended) {
+			this.socket.emit('message', '/play');
+		} else {
+			this.socket.emit('message', '/pause');
+		}
 	}
 
 	onResize() {

@@ -123,18 +123,14 @@ io.on('connection', function(socket) {
 	socket.on('message', function(msg) {
 		log(socket, 'Message');
 
-		io.emit('message', {
-			name: socket.name.value,
-			msg: msg.trim(),
-			sent: new Date()
-		});
-
 		if (msg.trim().toLowerCase() == '/play') {
 			if (!socket.admin) return;
 
 			log(socket, 'triggered playback');
 
 			io.emit('play');
+
+			return;
 		}
 
 		if (msg.trim().toLowerCase() == '/pause') {
@@ -143,6 +139,8 @@ io.on('connection', function(socket) {
 			log(socket, 'paused playback');
 
 			io.emit('pause');
+
+			return;
 		}
 
 		if (msg.trim().toLowerCase().substr(0, 6) == '/jump ') {
@@ -153,6 +151,27 @@ io.on('connection', function(socket) {
 			log(socket, 'jumped playback to ' + position);
 
 			io.emit('jump', position);
+
+			return;
+		}
+
+		io.emit('message', {
+			name: socket.name.value,
+			msg: msg.trim(),
+			sent: new Date()
+		});
+
+		if (msg.trim().toLowerCase().substr(0, 6) == '/roll ') {
+			const range = Number(msg.trim().toLowerCase().substr(6)).toFixed();
+			const roll = Math.floor(Math.random() * range) + 1;
+
+			log(socket, 'rolled ' + roll);
+
+			io.emit('message', {
+				//name: socket.name.value,
+				msg: socket.name.value + ' rolled a ' + roll,
+				sent: new Date()
+			});
 		}
 	});
 

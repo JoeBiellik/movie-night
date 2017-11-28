@@ -21,20 +21,49 @@ video::-webkit-media-controls {
 	display: none !important;
 }
 
+.controls {
+	width: calc(100% - 450px);
+	height: 55px;
+	position: absolute;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.9);
+}
+
+.controls button {
+	cursor: pointer;
+}
+
+.controls .progress {
+	width: calc(100% - 250px);
+	/*cursor: pointer;*/
+	margin-top: 9px;
+	background-color: #777;
+}
+
+.controls .progress .progress-bar {
+	width: 0%;
+	height: 20px;
+	/*cursor: pointer;*/
+}
+
+.controls p {
+	font-size: 1.45rem;
+	color: #fff;
+}
+
 #osd {
-	width: 100%;
+	width: calc(100% - 450px);
 	height: 4rem;
 	pointer-events: none;
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
-	right: 0;
 	z-index: 2147483647;
 	margin: auto;
 	color: #fff;
 	text-align: center;
-	font-size: 2.5rem;
+	font-size: 2.2rem;
 	line-height: 4rem;
 	background-color: rgba(221, 221, 221, 0.3);
 }
@@ -46,11 +75,15 @@ video::-webkit-media-controls {
 	background-color: #fff;
 }
 
-#sidebar a i {
+#sidebar a i.fa {
 	position: absolute;
 	top: 16px;
 	right: 16px;
 	font-size: 1.3rem;
+}
+
+#sidebar a i.fa.fa-cog {
+	right: 50px;
 }
 
 .nav {

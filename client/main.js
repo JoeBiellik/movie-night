@@ -16,11 +16,15 @@ $(() => {
 		},
 		video: {
 			container: $('#video'),
-			player: $('#video video')
+			player: $('#video video'),
+			controls: $('section.controls'),
+			play: $('section.controls button'),
+			progress: $('section.controls .progress .progress-bar')
 		},
 		sidebar: $('#sidebar'),
 		tabs: $('nav'),
-		leave: $('#sidebar > a'),
+		movie: $('#sidebar > a i.fa.fa-cog'),
+		leave: $('#sidebar > a i.fa.fa-sign-out'),
 		users: {
 			count: $('nav .badge'),
 			list: $('#users dl')

@@ -23,6 +23,7 @@ export default class Player {
 		this._elements.player.on('seeking', this._onVideoSeeked.bind(this));
 		this._elements.player.on('seeked', this._onVideoSeeked.bind(this));
 		this._elements.player.on('ended', this._onVideoEnded.bind(this));
+		this._elements.player.on('timeupdate', this._onVideoTimeUpdate.bind(this));
 		this._elements.player.on('dblclick', this._onVideoDblClick.bind(this));
 		this._elements.player.on('DOMMouseScroll mousewheel', this._onVideoScroll.bind(this));
 		this._elements.player.on('contextmenu', () => { return this.controls; });
@@ -163,6 +164,11 @@ export default class Player {
 
 	_onVideoEnded() {
 		console.log('ended');
+	}
+
+	_onVideoTimeUpdate() {
+		this._elements.progress.css('width', Math.floor((this.position / this.duration) * 100) + '%');
+		$('p', this._elements.controls).text(this.positionString + ' / ' + this.durationString);
 	}
 
 	_onVideoProgress() {

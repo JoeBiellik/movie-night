@@ -49,13 +49,13 @@ export default class Messages {
 				return false;
 			}
 
-			if (value.toLowerCase() == '/movie') {
-				input.val('').focus();
+			// if (value.toLowerCase() == '/movie') {
+			// 	input.val('').focus();
 
-				this._elements.form.trigger('message:movie');
+			// 	this._elements.form.trigger('message:movie');
 
-				return false;
-			}
+			// 	return false;
+			// }
 
 			if (value.toLowerCase() == '/position') {
 				input.val('').focus();
@@ -74,10 +74,25 @@ export default class Messages {
 			// 	return false;
 			// }
 
-			if (value.toLowerCase() != '/play' && value.toLowerCase() != '/pause' && value.toLowerCase().substr(0, 6) != '/jump ') {
+			if (value.toLowerCase().substr(0, 6) == '/roll ') {
+				const range = Number(value.toLowerCase().substr(6)).toFixed();
+
+				if (range == 'NaN' || Number.isNaN(range) || range < 2 || range > 99) {
+					this.add(new Message({
+						name: 'Movie Night',
+						msg: 'Command not recognised, please use the format:\n/roll [2-99]'
+					}));
+
+					input.val('').focus();
+
+					return false;
+				}
+			}
+
+			if (value.toLowerCase() != '/play' && value.toLowerCase() != '/pause' && value.toLowerCase().substr(0, 6) != '/jump ' && value.toLowerCase().substr(0, 6) != '/roll ') {
 				this.add(new Message({
 					name: 'Movie Night',
-					msg: 'Command not recognised, supported commands:\n/jump [time]\n/position'
+					msg: 'Command not recognised, supported commands:\n/position\n/roll [2-99]'
 				}));
 
 				input.val('').focus();
