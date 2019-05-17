@@ -33,7 +33,7 @@
   "dependencies": {
     "compression": "^1.7.1",
     "config": "^1.28.1",
-    "express": "^4.16.2",
+    "express": "^4.17.0",
     "lodash": "^4.17.4",
     "marvel-characters": "^1.0.3",
     "moviedb": "^0.2.10",
