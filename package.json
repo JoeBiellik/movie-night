@@ -37,7 +37,7 @@
     "lodash": "^4.17.4",
     "marvel-characters": "^1.0.3",
     "moviedb": "^0.2.10",
-    "pug": "^2.0.0-rc.4",
+    "pug": "^2.0.4",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
