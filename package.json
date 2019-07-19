@@ -34,7 +34,7 @@
     "compression": "^1.7.1",
     "config": "^1.28.1",
     "express": "^4.16.2",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.15",
     "marvel-characters": "^1.0.3",
     "moviedb": "^0.2.10",
     "pug": "^2.0.0-rc.4",
